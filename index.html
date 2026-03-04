@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abinash Swain</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-name">Abinash Swain</div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="research.html">Research</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">PhD Student · Theoretical Physics</div>
+      <h1 class="hero-name">Abinash<br><em>Swain</em></h1>
+      <p class="hero-affil">University of the Witwatersrand</p>
+      <p class="hero-bio">
+        Exploring the deep intersections of <span class="hl-tp">theoretical physics</span>,
+        <span class="hl-ml">machine learning</span>, and
+        <span class="hl-qi">quantum information</span> —
+        where the boundaries between computation, geometry, and nature dissolve.
+      </p>
+      <div class="hero-actions">
+        <a href="research.html" class="btn-primary">Research Map →</a>
+        <a href="https://inspirehep.net/search?p=a+Swain&of=hb" target="_blank" class="btn-secondary">INSPIRE-HEP ↗</a>
+      </div>
+    </div>
+
+    <!-- Animated field orbits -->
+    <div class="orbit-diagram" aria-hidden="true">
+      <div class="orbit-ring ring-1"></div>
+      <div class="orbit-ring ring-2"></div>
+      <div class="orbit-ring ring-3"></div>
+      <div class="orbit-node node-tp">TP</div>
+      <div class="orbit-node node-ml">ML</div>
+      <div class="orbit-node node-qi">QI</div>
+      <div class="orbit-center">∩</div>
+    </div>
+  </section>
+
+  <!-- Fields strip -->
+  <section class="fields-strip">
+    <div class="field-card">
+      <div class="field-icon" style="color:var(--tp)">⟨ψ|</div>
+      <div class="field-name">Theoretical Physics</div>
+      <div class="field-desc">Quantum field theory, string theory, and the mathematical structures underlying physical reality.</div>
+    </div>
+    <div class="field-divider">×</div>
+    <div class="field-card">
+      <div class="field-icon" style="color:var(--ml)">∇</div>
+      <div class="field-name">Machine Learning</div>
+      <div class="field-desc">Neural architectures, geometric deep learning, and data-driven approaches to physical problems.</div>
+    </div>
+    <div class="field-divider">×</div>
+    <div class="field-card">
+      <div class="field-icon" style="color:var(--qi)">|0⟩+|1⟩</div>
+      <div class="field-name">Quantum Information</div>
+      <div class="field-desc">Quantum computation, entanglement, and the information-theoretic foundations of quantum mechanics.</div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="section-label">About</div>
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>Background</h2>
+        <p>
+          I am a PhD student in Theoretical Physics at the University of the Witwatersrand, Johannesburg.
+          My research sits at the confluence of three rapidly evolving fields — asking how the tools of
+          machine learning can illuminate problems in quantum theory, and conversely, how quantum principles
+          might reshape computation and learning.
+        </p>
+        <p>
+          I maintain a living <a href="research.html">research map</a> — an interactive Venn diagram 
+          cataloguing papers across these intersecting domains, organised by the regions of overlap 
+          they inhabit.
+        </p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--tp)">Wits</div>
+          <div class="stat-label">University</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--ml)">PhD</div>
+          <div class="stat-label">Degree</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--qi)">3</div>
+          <div class="stat-label">Research Fields</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--gold)">JHB</div>
+          <div class="stat-label">Location</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Research teaser -->
+  <section class="research-teaser">
+    <div class="section-label">Research</div>
+    <div class="teaser-inner">
+      <div class="teaser-text">
+        <h2>The Research Map</h2>
+        <p>
+          An interactive Venn diagram cataloguing papers across theoretical physics,
+          machine learning, and quantum information — including their intersections.
+          Updated as I read.
+        </p>
+        <a href="research.html" class="btn-primary">Open Research Map →</a>
+      </div>
+      <div class="teaser-venn" aria-hidden="true">
+        <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="75" r="60" fill="rgba(79,195,247,0.08)" stroke="#4fc3f7" stroke-width="1" stroke-opacity="0.4"/>
+          <circle cx="120" cy="75" r="60" fill="rgba(165,214,167,0.08)" stroke="#a5d6a7" stroke-width="1" stroke-opacity="0.4"/>
+          <circle cx="100" cy="112" r="60" fill="rgba(206,147,216,0.08)" stroke="#ce93d8" stroke-width="1" stroke-opacity="0.4"/>
+          <text x="60" y="48" font-family="JetBrains Mono" font-size="7" fill="#4fc3f7" text-anchor="middle" opacity="0.7">TP</text>
+          <text x="140" y="48" font-family="JetBrains Mono" font-size="7" fill="#a5d6a7" text-anchor="middle" opacity="0.7">ML</text>
+          <text x="100" y="162" font-family="JetBrains Mono" font-size="7" fill="#ce93d8" text-anchor="middle" opacity="0.7">QI</text>
+          <text x="100" y="95" font-family="JetBrains Mono" font-size="9" fill="rgba(240,192,96,0.6)" text-anchor="middle">∩</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <div class="section-label">Contact</div>
+    <div class="contact-inner">
+      <h2>Get in touch</h2>
+      <p>Open to discussions on research, collaborations, or just interesting ideas at the boundaries of physics and computation.</p>
+      <div class="contact-links">
+        <a href="mailto:your.email@wits.ac.za" class="contact-item">
+          <span class="contact-icon">✉</span>
+          <span>your.email@wits.ac.za</span>
+        </a>
+        <a href="https://inspirehep.net/search?p=a+Swain&of=hb" target="_blank" class="contact-item">
+          <span class="contact-icon">◈</span>
+          <span>INSPIRE-HEP</span>
+        </a>
+        <a href="https://github.com/abinash7s" target="_blank" class="contact-item">
+          <span class="contact-icon">⌥</span>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Abinash Swain · University of the Witwatersrand</span>
+  <span class="footer-right">Built with curiosity</span>
+</footer>
+
+<script>
+  // Staggered entrance animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.field-card, .about-grid, .teaser-inner, .contact-inner, .stat-item')
+    .forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
