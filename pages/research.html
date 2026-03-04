@@ -48,7 +48,7 @@ machine learning, and quantum information.
 Click regions of the diagram to view relevant papers.
 </p>
 
-<div id="venn"></div>
+<div id="venn" style="max-width:650px;"></div>
 
 </section>
 
@@ -80,19 +80,80 @@ Click regions of the diagram to view relevant papers.
 
 <script>
 
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+
+<script>
+
 var sets = [
 
-{sets: ['Physics'], size:10},
-{sets: ['Machine Learning'], size:10},
-{sets: ['Quantum'], size:10},
+{sets:["Physics"], size:12, label:"Theoretical Physics"},
+{sets:["ML"], size:12, label:"Machine Learning"},
+{sets:["Quantum"], size:12, label:"Quantum Information"},
 
-{sets:['Physics','Machine Learning'], size:5},
-{sets:['Physics','Quantum'], size:3},
-{sets:['Machine Learning','Quantum'], size:4},
+{sets:["Physics","ML"], size:6},
+{sets:["Physics","Quantum"], size:4},
+{sets:["ML","Quantum"], size:5},
 
-{sets:['Physics','Machine Learning','Quantum'], size:2}
+{sets:["Physics","ML","Quantum"], size:3}
 
 ];
+
+
+var chart = venn.VennDiagram()
+.width(600)
+.height(400);
+
+var div = d3.select("#venn");
+
+div.datum(sets).call(chart);
+
+
+
+/* nicer styling */
+
+div.selectAll("path")
+.style("stroke-opacity", 0)
+.style("stroke", "#fff")
+.style("stroke-width", 3)
+.style("fill-opacity", 0.6);
+
+
+
+/* hover highlight */
+
+div.selectAll("g")
+.on("mouseover", function(event,d){
+
+venn.sortAreas(div, d);
+
+d3.select(this).select("path")
+.transition()
+.duration(200)
+.style("fill-opacity", .8);
+
+})
+
+.on("mouseout", function(event,d){
+
+d3.select(this).select("path")
+.transition()
+.duration(200)
+.style("fill-opacity", .6);
+
+})
+
+.on("click", function(event,d){
+
+var key = d.sets.join(",");
+
+document.getElementById("papers").innerHTML =
+"<div class='card'><b>Selected area:</b> " + key + "</div>";
+
+});
+
+
+</script>
 
 var chart = venn.VennDiagram();
 
