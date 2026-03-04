@@ -2,46 +2,193 @@
 <html>
 
 <head>
-  <title>Abinash Swain</title>
-  <style>
-    body {
-      font-family: Arial;
-      margin: 40px;
-      max-width: 800px;
-    }
 
-    h1 {
-      color: #333;
-    }
+<title>Abinash Swain</title>
 
-    nav a {
-      margin-right: 20px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-  </style>
+<style>
+
+body{
+font-family: Arial;
+margin:40px;
+max-width:900px;
+line-height:1.6;
+}
+
+h1,h2{
+color:#333;
+}
+
+section{
+margin-top:80px;
+}
+
+#venn{
+width:600px;
+height:400px;
+}
+
+.paper{
+margin-left:20px;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
 <h1>Abinash Swain</h1>
 
 <p>
-PhD student in theoretical physics working at the intersection of
+PhD student working at the intersection of
+<b>Theoretical Physics</b>,
+<b>Machine Learning</b>,
+and
+<b>Quantum Information</b>.
 </p>
 
-<ul>
-<li>Theoretical Physics</li>
-<li>Machine Learning</li>
-<li>Quantum Information</li>
-</ul>
+<hr>
 
-<nav>
-<a href="#">Research</a>
-<a href="#">Research Map</a>
-<a href="#">Papers</a>
-<a href="#">CV</a>
-</nav>
+
+<section>
+
+<h2>Research Overview</h2>
+
+<p>
+My research focuses on applying modern machine learning techniques to
+problems in theoretical physics, particularly matrix models,
+quantum many-body systems, and quantum information theory.
+</p>
+
+</section>
+
+
+<section>
+
+<h2>Research Map</h2>
+
+<p>
+The following diagram shows the intersections of my research areas.
+Click a region to view relevant papers.
+</p>
+
+<div id="venn"></div>
+
+</section>
+
+
+<section>
+
+<h2>Papers</h2>
+
+<div id="papers">
+
+<p>Select a region of the research map above.</p>
+
+</div>
+
+</section>
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+
+
+<script>
+
+var sets = [
+
+{sets: ['Physics'], size:10},
+{sets: ['Machine Learning'], size:10},
+{sets: ['Quantum'], size:10},
+
+{sets:['Physics','Machine Learning'], size:5},
+{sets:['Physics','Quantum'], size:3},
+{sets:['Machine Learning','Quantum'], size:4},
+
+{sets:['Physics','Machine Learning','Quantum'], size:2}
+
+];
+
+
+var chart = venn.VennDiagram();
+
+var div = d3.select("#venn");
+
+div.datum(sets).call(chart);
+
+
+var papers = {
+
+"Physics":[
+"Matrix Models in String Theory",
+"Large N Gauge Theories"
+],
+
+"Physics,Machine Learning":[
+"Neural Quantum States (Carleo & Troyer)",
+"Normalizing Flows for Matrix Models"
+],
+
+"Machine Learning":[
+"Deep Generative Models",
+"Normalizing Flows"
+],
+
+"Quantum":[
+"Nielsen & Chuang Quantum Computation"
+],
+
+"Physics,Quantum":[
+"Quantum Complexity in Field Theory"
+],
+
+"Machine Learning,Quantum":[
+"Quantum Machine Learning Review"
+],
+
+"Physics,Machine Learning,Quantum":[
+"ML for Quantum Many Body Systems"
+]
+
+};
+
+
+
+div.selectAll("g")
+.on("click", function(d,i){
+
+var key = d.sets.join(",");
+
+var list = papers[key];
+
+var html = "<ul>";
+
+if(list){
+
+for(var i=0;i<list.length;i++){
+
+html += "<li class='paper'>" + list[i] + "</li>";
+
+}
+
+}else{
+
+html += "<li>No papers listed yet.</li>";
+
+}
+
+html += "</ul>";
+
+document.getElementById("papers").innerHTML = html;
+
+});
+
+
+</script>
+
 
 </body>
+
 </html>
