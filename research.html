@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Map · Abinash Swain</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Research page extras */
+  .venn-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  svg#venn {
+    width: 100%;
+    height: 100%;
+    max-width: 680px;
+    max-height: 580px;
+  }
+
+  .venn-region { cursor: pointer; transition: all 0.25s ease; }
+  .venn-region:hover { filter: brightness(1.18); }
+
+  .region-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    fill: rgba(255,255,255,0.55);
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .region-label.count {
+    font-size: 10px;
+    fill: rgba(255,255,255,0.28);
+  }
+  .field-label-svg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    pointer-events: none;
+    text-anchor: middle;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .region-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .sidebar-title { font-family: var(--font-display); font-size: 17px; flex: 1; color: var(--text); }
+
+  .add-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    width: 30px; height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .add-btn:hover { background: rgba(240,192,96,0.1); border-color: var(--gold); }
+
+  .papers-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    font-style: italic;
+    line-height: 1.9;
+  }
+
+  .paper-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.15s;
+    animation: slideIn 0.25s ease;
+  }
+  .paper-card:hover { border-color: var(--muted); transform: translateX(2px); }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .paper-title { font-size: 15px; line-height: 1.5; margin-bottom: 6px; color: var(--text); }
+  .paper-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .paper-meta a { color: var(--gold); text-decoration: none; }
+  .paper-meta a:hover { text-decoration: underline; }
+  .paper-notes { margin-top: 8px; font-size: 13px; color: var(--muted); font-style: italic; line-height: 1.5; }
+
+  .paper-delete {
+    position: absolute; top: 8px; right: 8px;
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 13px;
+    opacity: 0; transition: opacity 0.2s, color 0.2s; padding: 2px 5px;
+  }
+  .paper-card:hover .paper-delete { opacity: 1; }
+  .paper-delete:hover { color: #ff6b6b; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.2s ease;
+  }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    width: 500px; max-width: 95vw;
+    padding: 28px 32px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0 }
+    to   { transform: translateY(0); opacity: 1 }
+  }
+
+  .modal h2 { font-size: 22px; font-weight: 400; margin-bottom: 22px; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 16px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus { border-color: var(--gold); }
+  .form-group select option { background: var(--surface); }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+  .btn-modal {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em;
+    padding: 9px 20px; border-radius: 5px; cursor: pointer;
+    transition: all 0.2s; border: 1px solid var(--border);
+  }
+  .btn-cancel { background: none; color: var(--muted); }
+  .btn-cancel:hover { color: var(--text); border-color: var(--muted); }
+  .btn-save { background: var(--gold); color: #08080e; border-color: var(--gold); font-weight: 500; }
+  .btn-save:hover { background: #f5d070; }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  /* Legend */
+  .venn-legend {
+    position: absolute;
+    bottom: 18px; left: 18px;
+    display: flex; gap: 16px;
+    z-index: 5;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--muted); cursor: pointer; transition: color 0.2s;
+  }
+  .legend-item:hover { color: var(--text); }
+  .legend-swatch { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Paper count badge */
+  .total-badge {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--gold);
+  }
+</style>
+</head>
+<body class="research-page">
+
+<nav>
+  <div class="nav-name">Abinash Swain</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="research.html" class="active">Research</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="research-header">
+  <div class="section-label">Research Map</div>
+  <h1>Knowledge Cartography</h1>
+  <p>
+    A living map of research papers across theoretical physics, machine learning, and quantum information —
+    organised by the region of intersection they inhabit. Click any zone to browse or add papers.
+  </p>
+</div>
+
+<div class="research-layout">
+
+  <!-- Venn diagram -->
+  <div class="venn-container">
+    <svg id="venn" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="clipTP"><circle cx="228" cy="188" r="172"/></clipPath>
+        <clipPath id="clipML"><circle cx="372" cy="188" r="172"/></clipPath>
+        <clipPath id="clipQI"><circle cx="300" cy="318" r="172"/></clipPath>
+        <radialGradient id="gTP" cx="38%" cy="38%">
+          <stop offset="0%" stop-color="#4fc3f7" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#4fc3f7" stop-opacity="0.05"/>
+        </radialGradient>
+        <radialGradient id="gML" cx="62%" cy="38%">
+          <stop offset="0%" stop-color="#a5d6a7" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#a5d6a7" stop-opacity="0.05"/>
+        </radialGradient>
+        <radialGradient id="gQI" cx="50%" cy="62%">
+          <stop offset="0%" stop-color="#ce93d8" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#ce93d8" stop-opacity="0.05"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Base circles -->
+      <circle cx="228" cy="188" r="172" fill="url(#gTP)" stroke="#4fc3f7" stroke-width="1.2" stroke-opacity="0.35"/>
+      <circle cx="372" cy="188" r="172" fill="url(#gML)" stroke="#a5d6a7" stroke-width="1.2" stroke-opacity="0.35"/>
+      <circle cx="300" cy="318" r="172" fill="url(#gQI)" stroke="#ce93d8" stroke-width="1.2" stroke-opacity="0.35"/>
+
+      <!-- Intersection overlays -->
+      <circle cx="372" cy="188" r="172" fill="rgba(120,210,195,0.1)" clip-path="url(#clipTP)"
+        class="venn-region" data-region="tp-ml" style="cursor:pointer"/>
+      <circle cx="300" cy="318" r="172" fill="rgba(135,155,225,0.1)" clip-path="url(#clipTP)"
+        class="venn-region" data-region="tp-qi" style="cursor:pointer"/>
+      <circle cx="300" cy="318" r="172" fill="rgba(175,175,215,0.1)" clip-path="url(#clipML)"
+        class="venn-region" data-region="ml-qi" style="cursor:pointer"/>
+
+      <!-- Centre (all three) -->
+      <circle cx="300" cy="254" r="40"
+        fill="rgba(240,192,96,0.1)" stroke="rgba(240,192,96,0.25)" stroke-width="1"
+        class="venn-region" data-region="all" style="cursor:pointer"/>
+
+      <!-- Invisible full-circle hit regions for pure fields -->
+      <circle cx="228" cy="188" r="172" fill="transparent"
+        class="venn-region" data-region="tp" style="cursor:pointer"/>
+      <circle cx="372" cy="188" r="172" fill="transparent"
+        class="venn-region" data-region="ml" style="cursor:pointer"/>
+      <circle cx="300" cy="318" r="172" fill="transparent"
+        class="venn-region" data-region="qi" style="cursor:pointer"/>
+
+      <!-- Field labels -->
+      <text class="field-label-svg" x="165" y="112" fill="#4fc3f7">Theoretical</text>
+      <text class="field-label-svg" x="165" y="130" fill="#4fc3f7">Physics</text>
+      <text id="count-tp" class="region-label count" x="165" y="148">0 papers</text>
+
+      <text class="field-label-svg" x="435" y="112" fill="#a5d6a7">Machine</text>
+      <text class="field-label-svg" x="435" y="130" fill="#a5d6a7">Learning</text>
+      <text id="count-ml" class="region-label count" x="435" y="148">0 papers</text>
+
+      <text class="field-label-svg" x="300" y="450" fill="#ce93d8">Quantum Information</text>
+      <text class="field-label-svg" x="300" y="468" fill="#ce93d8">&amp; Computing</text>
+      <text id="count-qi" class="region-label count" x="300" y="486">0 papers</text>
+
+      <!-- Intersection labels -->
+      <text id="count-tp-ml" class="region-label" x="300" y="158">0</text>
+      <text class="region-label" x="300" y="172" style="font-size:9px;fill:rgba(255,255,255,0.2)">TP ∩ ML</text>
+
+      <text id="count-tp-qi" class="region-label" x="210" y="308">0</text>
+      <text class="region-label" x="208" y="322" style="font-size:9px;fill:rgba(255,255,255,0.2)">TP ∩ QI</text>
+
+      <text id="count-ml-qi" class="region-label" x="392" y="308">0</text>
+      <text class="region-label" x="392" y="322" style="font-size:9px;fill:rgba(255,255,255,0.2)">ML ∩ QI</text>
+
+      <text id="count-all" class="region-label" x="300" y="251" style="font-size:13px;fill:rgba(240,192,96,0.75)">0</text>
+      <text class="region-label" x="300" y="266" style="font-size:9px;fill:rgba(240,192,96,0.35)">All Three</text>
+    </svg>
+
+    <div class="venn-legend">
+      <div class="legend-item" onclick="selectRegion('tp')">
+        <div class="legend-swatch" style="background:#4fc3f7"></div>Theor. Physics
+      </div>
+      <div class="legend-item" onclick="selectRegion('ml')">
+        <div class="legend-swatch" style="background:#a5d6a7"></div>Machine Learning
+      </div>
+      <div class="legend-item" onclick="selectRegion('qi')">
+        <div class="legend-swatch" style="background:#ce93d8"></div>Quantum Info.
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="region-dot" id="sidebar-dot" style="background:#333"></div>
+      <div class="sidebar-title" id="sidebar-title">Select a region</div>
+      <span class="total-badge" id="totalCount">0 papers</span>
+      <button class="add-btn" id="addBtn" onclick="openModal()" title="Add paper (N)">+</button>
+    </div>
+    <div class="papers-list" id="papersList">
+      <div class="empty-state">
+        Click any region of the<br>diagram to explore papers,<br>or add your first one.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Add paper modal -->
+<div class="modal-overlay" id="modalOverlay" style="display:none" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <h2>Add Paper</h2>
+    <div class="form-group">
+      <label>Title *</label>
+      <input type="text" id="fTitle" placeholder="e.g. Quantum advantage in learning from experiments"/>
+    </div>
+    <div class="form-group">
+      <label>Authors</label>
+      <input type="text" id="fAuthors" placeholder="e.g. Huang et al."/>
+    </div>
+    <div class="form-group">
+      <label>Year</label>
+      <input type="text" id="fYear" placeholder="2022" maxlength="4"/>
+    </div>
+    <div class="form-group">
+      <label>Region</label>
+      <select id="fRegion">
+        <option value="tp">Theoretical Physics (only)</option>
+        <option value="ml">Machine Learning (only)</option>
+        <option value="qi">Quantum Information (only)</option>
+        <option value="tp-ml">TP ∩ Machine Learning</option>
+        <option value="tp-qi">TP ∩ Quantum Information</option>
+        <option value="ml-qi">ML ∩ Quantum Information</option>
+        <option value="all">All Three Fields</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="fNotes" rows="3" placeholder="Brief notes on why this paper matters..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>URL / arXiv / DOI</label>
+      <input type="text" id="fUrl" placeholder="https://arxiv.org/abs/..."/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal btn-save" onclick="addPaper()">Save Paper</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State & Storage ────────────────────────────────────────────────────
+const KEY = 'abinash_research_v1';
+let papers = [];
+let activeRegion = null;
+
+const META = {
+  tp:      { label: 'Theoretical Physics',               color: '#4fc3f7' },
+  ml:      { label: 'Machine Learning',                  color: '#a5d6a7' },
+  qi:      { label: 'Quantum Information & Computing',   color: '#ce93d8' },
+  'tp-ml': { label: 'Theor. Physics ∩ Machine Learning', color: '#80d8c0' },
+  'tp-qi': { label: 'Theor. Physics ∩ Quantum Info',     color: '#9b9fd4' },
+  'ml-qi': { label: 'Machine Learning ∩ Quantum Info',   color: '#c4b8e4' },
+  all:     { label: 'All Three Fields',                  color: '#f0c060' },
+};
+
+async function save() {
+  try { await window.storage.set(KEY, JSON.stringify(papers)); } catch(_) {
+    try { localStorage.setItem(KEY, JSON.stringify(papers)); } catch(__) {}
+  }
+}
+
+async function load() {
+  try {
+    const r = await window.storage.get(KEY);
+    if (r?.value) papers = JSON.parse(r.value);
+  } catch(_) {
+    try { const r = localStorage.getItem(KEY); if(r) papers = JSON.parse(r); } catch(__) {}
+  }
+  updateCounts();
+}
+
+// ── Counts ─────────────────────────────────────────────────────────────
+function updateCounts() {
+  const c = {};
+  Object.keys(META).forEach(k => c[k] = 0);
+  papers.forEach(p => c[p.region] = (c[p.region]||0) + 1);
+
+  const map = { tp:'count-tp', ml:'count-ml', qi:'count-qi',
+    'tp-ml':'count-tp-ml','tp-qi':'count-tp-qi','ml-qi':'count-ml-qi', all:'count-all' };
+  Object.entries(map).forEach(([r,id]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = (c[r]||0) + (id.startsWith('count-t')||id.startsWith('count-m')||id.startsWith('count-q') ? ' papers' : '');
+  });
+  // Fix: plain numbers for intersections
+  ['count-tp-ml','count-tp-qi','count-ml-qi','count-all'].forEach(id => {
+    const el = document.getElementById(id);
+    const r = Object.entries(map).find(([,i])=>i===id)?.[0];
+    if(el && r) el.textContent = c[r]||0;
+  });
+
+  document.getElementById('totalCount').textContent =
+    papers.length + (papers.length===1?' paper':' papers');
+}
+
+// ── Select region ──────────────────────────────────────────────────────
+function selectRegion(region) {
+  activeRegion = region;
+  const m = META[region];
+  document.getElementById('sidebar-dot').style.background = m.color;
+  document.getElementById('sidebar-title').textContent = m.label;
+  document.getElementById('fRegion').value = region;
+  renderPapers(region);
+}
+
+function renderPapers(region) {
+  const list = document.getElementById('papersList');
+  const items = papers.filter(p => p.region === region);
+  if (!items.length) {
+    list.innerHTML = `<div class="empty-state">No papers here yet.<br><em>Press + to add one.</em></div>`;
+    return;
+  }
+  list.innerHTML = items.map(p => `
+    <div class="paper-card">
+      <button class="paper-delete" onclick="deletePaper('${p.id}')">✕</button>
+      <div class="paper-title">${esc(p.title)}</div>
+      <div class="paper-meta">
+        ${p.authors?`<span>${esc(p.authors)}</span>`:''}
+        ${p.year?`<span>${esc(p.year)}</span>`:''}
+        ${p.url?`<a href="${esc(p.url)}" target="_blank">↗ link</a>`:''}
+      </div>
+      ${p.notes?`<div class="paper-notes">${esc(p.notes)}</div>`:''}
+    </div>
+  `).join('');
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Modal ──────────────────────────────────────────────────────────────
+function openModal() {
+  if (activeRegion) document.getElementById('fRegion').value = activeRegion;
+  document.getElementById('modalOverlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('fTitle').focus(), 60);
+}
+function closeModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+  ['fTitle','fAuthors','fYear','fNotes','fUrl'].forEach(id => document.getElementById(id).value = '');
+}
+function closeOnOverlay(e) { if(e.target.id==='modalOverlay') closeModal(); }
+
+async function addPaper() {
+  const title = document.getElementById('fTitle').value.trim();
+  if (!title) { document.getElementById('fTitle').focus(); return; }
+  const p = {
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+    title,
+    authors: document.getElementById('fAuthors').value.trim(),
+    year:    document.getElementById('fYear').value.trim(),
+    region:  document.getElementById('fRegion').value,
+    notes:   document.getElementById('fNotes').value.trim(),
+    url:     document.getElementById('fUrl').value.trim(),
+    added:   new Date().toISOString(),
+  };
+  papers.push(p);
+  await save();
+  updateCounts();
+  selectRegion(p.region);
+  closeModal();
+}
+
+async function deletePaper(id) {
+  papers = papers.filter(p => p.id !== id);
+  await save();
+  updateCounts();
+  if (activeRegion) renderPapers(activeRegion);
+}
+
+// ── SVG interactions ───────────────────────────────────────────────────
+const venn = document.getElementById('venn');
+const tip  = document.getElementById('tooltip');
+const TIPS = {
+  tp:'Theoretical Physics', ml:'Machine Learning', qi:'Quantum Info & Computing',
+  'tp-ml':'TP ∩ ML','tp-qi':'TP ∩ Quantum Info','ml-qi':'ML ∩ Quantum Info', all:'All Three Fields'
+};
+
+venn.addEventListener('click', e => {
+  const el = e.target.closest('[data-region]');
+  if (el) selectRegion(el.dataset.region);
+});
+venn.addEventListener('mousemove', e => {
+  const el = e.target.closest('[data-region]');
+  if (el) {
+    tip.textContent = TIPS[el.dataset.region]||'';
+    tip.style.opacity='1';
+    tip.style.left=(e.clientX+14)+'px';
+    tip.style.top=(e.clientY-28)+'px';
+  } else { tip.style.opacity='0'; }
+});
+venn.addEventListener('mouseleave', ()=>tip.style.opacity='0');
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') closeModal();
+  if ((e.key==='n'||e.key==='N') && activeRegion && document.getElementById('modalOverlay').style.display==='none') openModal();
+});
+
+// ── Init ───────────────────────────────────────────────────────────────
+load();
+</script>
+</body>
+</html>
