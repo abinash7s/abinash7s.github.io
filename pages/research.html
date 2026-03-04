@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+
+<title>Research</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:40px;
+max-width:900px;
+line-height:1.6;
+}
+
+nav a{
+margin-right:25px;
+text-decoration:none;
+font-weight:bold;
+color:#333;
+}
+
+section{
+margin-top:80px;
+}
+
+#venn{
+width:600px;
+height:400px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<nav>
+
+<a href="/">Home</a>
+<a href="/pages/research.html">Research</a>
+<a href="/pages/contact.html">Contact</a>
+
+</nav>
+
+
+<h1>Research</h1>
+
+<section>
+
+<h2>Overview</h2>
+
+<p>
+
+My research explores the interface between theoretical physics,
+machine learning, and quantum information.
+
+</p>
+
+</section>
+
+
+<section>
+
+<h2>Research Map</h2>
+
+<p>
+Click regions of the diagram to view relevant papers.
+</p>
+
+<div id="venn"></div>
+
+</section>
+
+
+<section>
+
+<h2>Papers</h2>
+
+<div id="papers">
+
+<p>Select a region in the research map.</p>
+
+</div>
+
+</section>
+
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+
+<script>
+
+var sets = [
+
+{sets: ['Physics'], size:10},
+{sets: ['Machine Learning'], size:10},
+{sets: ['Quantum'], size:10},
+
+{sets:['Physics','Machine Learning'], size:5},
+{sets:['Physics','Quantum'], size:3},
+{sets:['Machine Learning','Quantum'], size:4},
+
+{sets:['Physics','Machine Learning','Quantum'], size:2}
+
+];
+
+var chart = venn.VennDiagram();
+
+var div = d3.select("#venn");
+
+div.datum(sets).call(chart);
+
+</script>
+
+</body>
+
+</html>
