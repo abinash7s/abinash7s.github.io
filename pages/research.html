@@ -11,6 +11,8 @@
 
 <body>
 
+<div id="particles"></div>
+
 <nav>
 <a href="/">Home</a>
 <a href="/pages/research.html">Research</a>
@@ -188,6 +190,51 @@ document.getElementById("papers").innerHTML = html;
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
+<script>
+
+tsParticles.load("particles",{
+
+background:{
+color:"#0b0f19"
+},
+
+particles:{
+
+number:{
+value:60
+},
+
+color:{
+value:"#58a6ff"
+},
+
+links:{
+enable:true,
+color:"#58a6ff",
+opacity:0.2,
+distance:150
+},
+
+move:{
+enable:true,
+speed:0.6
+},
+
+size:{
+value:2
+},
+
+opacity:{
+value:0.5
+}
+
+}
+
+});
+
+</script>
 
 </body>
 </html>
