@@ -11,6 +11,7 @@
 
 <body>
 
+<!-- physics particle background -->
 <div id="particles"></div>
 
 <nav>
@@ -18,6 +19,7 @@
 <a href="/pages/research.html">Research</a>
 <a href="/pages/contact.html">Contact</a>
 </nav>
+
 
 <div class="container">
 
@@ -40,6 +42,7 @@ machine learning, and quantum information.
 </section>
 
 
+
 <section>
 
 <h2>Research Map</h2>
@@ -48,9 +51,10 @@ machine learning, and quantum information.
 Click regions of the diagram to view relevant papers.
 </p>
 
-<div id="venn" style="max-width:650px;"></div>
+<div id="venn"></div>
 
 </section>
+
 
 
 <section>
@@ -60,7 +64,9 @@ Click regions of the diagram to view relevant papers.
 <div class="card">
 
 <div id="papers">
+
 <p>Select a region in the research map.</p>
+
 </div>
 
 </div>
@@ -72,15 +78,64 @@ Click regions of the diagram to view relevant papers.
 
 
 
-<!-- libraries -->
+<!-- JS libraries -->
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+
 
 
 <script>
 
-/* ---------- load paper database ---------- */
+/* ---------------------------
+   PARTICLE BACKGROUND
+--------------------------- */
+
+tsParticles.load("particles",{
+
+background:{
+color:"#0b0f19"
+},
+
+particles:{
+
+number:{
+value:60
+},
+
+color:{
+value:"#58a6ff"
+},
+
+links:{
+enable:true,
+color:"#58a6ff",
+opacity:0.2,
+distance:150
+},
+
+move:{
+enable:true,
+speed:0.6
+},
+
+size:{
+value:2
+},
+
+opacity:{
+value:0.5
+}
+
+}
+
+});
+
+
+/* ---------------------------
+   LOAD PAPER DATABASE
+--------------------------- */
 
 async function loadPapers(){
 
@@ -95,7 +150,9 @@ loadPapers();
 
 
 
-/* ---------- venn diagram ---------- */
+/* ---------------------------
+   VENN DIAGRAM
+--------------------------- */
 
 var sets = [
 
@@ -130,7 +187,7 @@ div.selectAll("path")
 .style("fill-opacity",0.6);
 
 
-/* hover interaction */
+/* hover effects */
 
 div.selectAll("g")
 .on("mouseover",function(event,d){
@@ -190,51 +247,7 @@ document.getElementById("papers").innerHTML = html;
 
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
-
-<script>
-
-tsParticles.load("particles",{
-
-background:{
-color:"#0b0f19"
-},
-
-particles:{
-
-number:{
-value:60
-},
-
-color:{
-value:"#58a6ff"
-},
-
-links:{
-enable:true,
-color:"#58a6ff",
-opacity:0.2,
-distance:150
-},
-
-move:{
-enable:true,
-speed:0.6
-},
-
-size:{
-value:2
-},
-
-opacity:{
-value:0.5
-}
-
-}
-
-});
-
-</script>
 
 </body>
+
 </html>
