@@ -1,0 +1,34 @@
+[
+{
+"title":"Neural Quantum States",
+"authors":"Carleo & Troyer",
+"year":2017,
+"tags":["Physics","ML"],
+"link":"https://arxiv.org/abs/1606.02318"
+},
+
+{
+"title":"Quantum Machine Learning",
+"authors":"Biamonte et al.",
+"year":2017,
+"tags":["ML","Quantum"],
+"link":"https://arxiv.org/abs/1611.09347"
+},
+
+{
+"title":"Variational Monte Carlo with Neural Networks",
+"authors":"Various",
+"year":2020,
+"tags":["Physics","ML","Quantum"],
+"link":"https://arxiv.org"
+},
+
+{
+"title":"Matrix Models in String Theory",
+"authors":"Various",
+"year":2000,
+"tags":["Physics"],
+"link":"https://arxiv.org"
+}
+
+]
