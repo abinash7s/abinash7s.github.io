@@ -143,23 +143,54 @@ d3.select(this).select("path")
 
 })
 
+
+  
 .on("click", function(event,d){
 
-var key = d.sets.join(",");
+var tags = d.sets;
 
-document.getElementById("papers").innerHTML =
-"<div class='card'><b>Selected area:</b> " + key + "</div>";
+var results = window.paperDatabase.filter(paper =>
+tags.every(t => paper.tags.includes(t))
+);
+
+var html = "";
+
+if(results.length==0){
+
+html = "<div class='card'>No papers yet.</div>";
+
+}else{
+
+results.forEach(p=>{
+
+html += "<div class='card'>";
+html += "<b>"+p.title+"</b><br>";
+html += p.authors+" ("+p.year+")<br>";
+html += "<a href='"+p.link+"' target='_blank'>arXiv</a>";
+html += "</div>";
 
 });
 
+}
 
-</script>
+document.getElementById("papers").innerHTML = html;
 
-var chart = venn.VennDiagram();
+})
 
-var div = d3.select("#venn");
 
-div.datum(sets).call(chart);
+<script>
+
+async function loadPapers(){
+
+const response = await fetch("/data/papers.json");
+
+const papers = await response.json();
+
+window.paperDatabase = papers;
+
+}
+
+loadPapers();
 
 </script>
 
